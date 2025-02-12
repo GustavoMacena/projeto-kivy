@@ -1,0 +1,115 @@
+Manager:
+    Menu:
+        name: 'Menu'
+    Game:
+        name: 'Game'
+    GameOver:
+        name: 'gameover'
+
+<MenuButton@Button>:
+    background_normal: 'assets/botao.png'
+    background_down: 'assets/botao-hover.png'
+
+<Menu>:
+    BoxLayout:
+        canvas:
+            Color:
+                rgba:1,1,1,1
+            Rectangle: 
+                size: self.size
+                pos: self.pos
+                source: 'assets/menu3.png'
+
+        orientation: 'vertical'
+        padding: '200dp', '30dp'
+        spacing: '350dp'
+        Widget:
+            size_size_hint_y: 1.5
+        BoxLayout:
+            spacing: '100dp'
+            MenuButton: 
+                text: 'Jogar'
+                font_size: '30dp'
+                font_name: 'assets/Monocraft'
+                on_release: app.root.current = 'Game'
+            MenuButton:
+                text: 'Sair'
+                font_size: '30dp'
+                font_name: 'assets/Monocraft'
+                on_release: app.stop()
+
+<Player>
+    source: 'assets/ratue_pixel_art.png'
+
+<Game>
+    FloatLayout:
+        canvas:
+            Color:
+                rgba:1,1,1,1
+            Rectangle: 
+                size: self.size
+                pos: self.pos
+                source: 'assets/layout2.png'
+        Label:
+            text: 'Score: ' + str(root.score)
+            font_name: 'assets/Monocraft'
+            font_size: '70sp'
+            bold: True
+            size_hint_y: None
+            height: self.font_size
+            y: root.height*0.95 - self.height
+        Label:
+            text: 'HighScore: ' + str(root.highscore)
+            font_name: 'assets/Monocraft'
+            font_size: '30sp'
+            bold: True
+            size_hint_y: None
+            height: self.font_size
+            y: root.height*0.85 - self.height
+        Player:
+            id: player
+            allow_stretch:True
+            size_hint: None, None
+            size: root.height/8 , root.height/8
+            x: root.width/20
+            y: root.height/2
+
+<GameOver>:
+    BoxLayout:
+        canvas:
+            Color:
+                rgba:1,1,1,1
+            Rectangle: 
+                size: self.size
+                pos: self.pos
+                source: 'assets/gameover.png'
+
+        orientation: 'vertical'
+        padding: '200dp', '30dp'
+        spacing: '350dp'
+        Widget:
+            size_size_hint_y: 1.5
+        BoxLayout:
+            spacing: '100dp'
+            MenuButton: 
+                text: 'Tentar de novo'
+                font_size: '30dp'
+                font_name: 'assets/Monocraft'
+                on_release: app.root.current = 'Game'
+            MenuButton:
+                text: 'Sair'
+                font_size: '30dp'                
+                font_name: 'assets/Monocraft'
+                on_release: app.stop()
+
+<Obstacle>:
+    canvas:
+        Color: 
+            rgba: 1,1,1,1
+        Rectangle: 
+            size: self.size
+            pos: self.pos
+            source: 'assets/wall.png'
+    size_hint:None, None
+    width: '100dp'
+    
