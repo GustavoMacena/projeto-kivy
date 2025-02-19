@@ -5,6 +5,8 @@ Manager:
         name: 'Game'
     GameOver:
         name: 'gameover'
+    ChoosePlayer:
+        name: 'chooseplayer'
 
 <MenuButton@Button>:
     background_normal: 'assets/botao.png'
@@ -18,7 +20,7 @@ Manager:
             Rectangle: 
                 size: self.size
                 pos: self.pos
-                source: 'assets/menu3.png'
+                source: 'assets/screens/menu3.png'
 
         orientation: 'vertical'
         padding: '200dp', '30dp'
@@ -33,13 +35,18 @@ Manager:
                 font_name: 'assets/Monocraft'
                 on_release: app.root.current = 'Game'
             MenuButton:
+                text: 'Escolher\nPersonagem'
+                font_size: '30dp'
+                font_name: 'assets/Monocraft'
+                on_release: app.root.current = 'chooseplayer'
+            MenuButton:
                 text: 'Sair'
                 font_size: '30dp'
                 font_name: 'assets/Monocraft'
                 on_release: app.stop()
 
 <Player>
-    source: 'assets/ratue_pixel_art.png'
+    source: app.current_player_image
 
 <Game>
     FloatLayout:
@@ -49,7 +56,7 @@ Manager:
             Rectangle: 
                 size: self.size
                 pos: self.pos
-                source: 'assets/layout2.png'
+                source: 'assets/screens/layout.png'
         Label:
             text: 'Score: ' + str(root.score)
             font_name: 'assets/Monocraft'
@@ -82,7 +89,7 @@ Manager:
             Rectangle: 
                 size: self.size
                 pos: self.pos
-                source: 'assets/gameover.png'
+                source: 'assets/screens/gameover.png'
 
         orientation: 'vertical'
         padding: '200dp', '30dp'
@@ -97,10 +104,71 @@ Manager:
                 font_name: 'assets/Monocraft'
                 on_release: app.root.current = 'Game'
             MenuButton:
-                text: 'Sair'
+                text: 'Menu'
                 font_size: '30dp'                
                 font_name: 'assets/Monocraft'
-                on_release: app.stop()
+                on_release: app.root.current = 'Menu'
+
+<ChoosePlayer>
+    BoxLayout:
+        canvas:
+            Color:
+                rgba:1,1,1,1
+            Rectangle: 
+                size: self.size
+                pos: self.pos
+                source: 'assets/screens/layout.png'
+
+        orientation: 'vertical'
+        padding: '600dp', '30dp'
+        spacing: '200dp'
+        BoxLayout:
+            orientation: 'vertical'
+            padding: '200dp', '10dp'
+            spacing: '10dp'
+            Label:
+                text: 'Escolha seu personagem'
+                font_name: 'assets/Monocraft'
+                font_size: '65sp'
+                bold: True
+                size_hint_y: None
+                height: self.font_size
+            Label:
+                text: root.playerlist[root.count]
+                font_name: 'assets/Monocraft'
+                font_size: '100sp'
+                color: '#854bb8'
+                bold: True
+                size_hint_y: None
+                height: self.font_size
+            Label:
+                text: root.playerlist[root.count]
+                font_name: 'assets/Monocraft'
+                font_size: '20sp'
+                color: '#525252'
+                bold: True
+                size_hint_y: None
+                height: self.font_size
+        BoxLayout:
+            orientation: 'horizontal'
+            spacing: '100dp'
+            MenuButton: 
+                text: '<'
+                font_size: '30dp'
+                font_name: 'assets/Monocraft'
+                on_release: root.ChangePlayerLeft()
+            AsyncImage:
+                source: root.currentplayer
+            MenuButton:
+                text: '>'
+                font_size: '30dp'                
+                font_name: 'assets/Monocraft'
+                on_release: root.ChangePlayerRight()
+        MenuButton:
+            text: 'Jogar'
+            font_size: '30dp'                
+            font_name: 'assets/Monocraft'
+            on_release: app.root.current = 'Game'
 
 <Obstacle>:
     canvas:
@@ -109,7 +177,7 @@ Manager:
         Rectangle: 
             size: self.size
             pos: self.pos
-            source: 'assets/wall.png'
+            source: 'assets/building.png'
     size_hint:None, None
     width: '100dp'
     

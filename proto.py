@@ -11,6 +11,8 @@ from kivy.properties import NumericProperty, ListProperty
 from kivy.animation import Animation
 from random import random
 from kivy.core.window import Window
+from kivy.graphics import Rectangle, Color
+from kivy.core.image import Image as CoreImage
 
 Window.size = (1280, 720) 
 Window.minimum_width, Window.minimum_height = (1280, 720)
@@ -24,10 +26,12 @@ class Menu(Screen):
 class Game(Screen):
     obstacles = []
     score = NumericProperty(0)
-    f = open("assets/highscore.txt", "r+")
-    highscore = NumericProperty(int(f.read()))
+    highscore = NumericProperty(0)
 
     def on_enter(self, *args):
+        # Read the high score from the file
+        with open("assets/highscore.txt", "r") as f:
+            self.highscore = int(f.read())
         Clock.schedule_interval(self.update, 1/30)
         Clock.schedule_interval(self.putObstacle, 1) 
 
@@ -42,14 +46,15 @@ class Game(Screen):
         if self.ids.player.y > self.height or self.ids.player.y < 0:
             if self.score > self.highscore :
                 self.highscore = self.score
-                print(self.f.write(str(self.highscore)))
+                with open("assets/highscore.txt", "w") as f:
+                    f.write(str(self.highscore))
             self.gameover()
         elif self.playerCollided():
             if self.score > self.highscore :
                 self.highscore = self.score
-                print(self.f.write(str(self.highscore)))
+                with open("assets/highscore.txt", "w") as f:
+                    f.write(str(self.highscore))
             self.gameover()            
-
 
     def putObstacle(self, *args):
         gap = self.height*0.4
@@ -102,6 +107,38 @@ class Obstacle(Widget):
         self.anim.bind(on_complete=self.vanish)
         self.anim.start(self)
         self.gameScreen = App.get_running_app().root.get_screen('Game')
+
+        # Load the texture and set it to repeat vertically
+        self.texture = CoreImage("assets/building.png").texture
+        self.texture.wrap = 'repeat'
+
+        # Bind the size and position to update the texture coordinates
+        self.bind(pos=self.update_rectangle, size=self.update_rectangle)
+
+        # Draw the texture
+        with self.canvas:
+            Color(1, 1, 1)  # Set color to white (no tint)
+            self.rect = Rectangle(texture=self.texture, pos=self.pos, size=self.size)
+
+    def update_rectangle(self, *args):
+        # Update the rectangle's position and size
+        self.rect.pos = self.pos
+        self.rect.size = self.size
+
+        # Calculate texture coordinates for horizontal completion and vertical repetition
+        tex_width = self.texture.width
+        tex_height = self.texture.height
+
+        # Ensure the image is not stretched horizontally
+        scale_x = self.width / tex_width
+
+        # Set texture coordinates to complete horizontally and repeat vertically
+        self.rect.tex_coords = (
+            0, 0,  # Bottom-left
+            scale_x, 0,  # Bottom-right
+            scale_x, self.height / tex_height,  # Top-right
+            0, self.height / tex_height,  # Top-left
+        )
 
     def on_x(self, *args):
         if self.gameScreen :

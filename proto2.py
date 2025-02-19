@@ -1,16 +1,19 @@
+from kivy.uix.accordion import StringProperty
 from kivy.uix.actionbar import partial
 from kivy.uix.accordion import NumericProperty
 import kivy
 from kivy.app import App 
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.screenmanager import ScreenManager, Screen
-from kivy.uix.image import Image
+from kivy.uix.image import Image, AsyncImage
 from kivy.uix.widget import Widget
 from kivy.clock import Clock
 from kivy.properties import NumericProperty, ListProperty
 from kivy.animation import Animation
 from random import random
 from kivy.core.window import Window
+from kivy.graphics import Rectangle, Color
+from kivy.core.image import Image as CoreImage
 
 Window.size = (1280, 720) 
 Window.minimum_width, Window.minimum_height = (1280, 720)
@@ -56,7 +59,7 @@ class Game(Screen):
     def putObstacle(self, *args):
         gap = self.height*0.4
         position = (self.height - gap)*random()
-        width = self.width*0.05
+        width = self.width*0.07
 
         obstacleLow = Obstacle(x=self.width, height= position, width = width)
         obstacleHigh = Obstacle(x=self.width, y = position + gap, height= self.height - position - gap, width = width)
@@ -105,6 +108,33 @@ class Obstacle(Widget):
         self.anim.start(self)
         self.gameScreen = App.get_running_app().root.get_screen('Game')
 
+        self.texture = CoreImage("assets/building.png").texture
+        self.texture.wrap = 'repeat'
+
+        self.bind(pos=self.update_rectangle, size=self.update_rectangle)
+
+        with self.canvas:
+            Color(1, 1, 1)
+            self.rect = Rectangle(texture=self.texture, pos=self.pos, size=self.size)
+
+    def update_rectangle(self, *args):
+        self.rect.pos = self.pos
+        self.rect.size = self.size
+
+        tex_width = self.texture.width
+        tex_height = self.texture.height
+
+        scale_x = self.width / tex_width
+
+        repeat_y = self.height / tex_height
+
+        self.rect.tex_coords = (
+            0, 0,
+            scale_x, 0,
+            scale_x, repeat_y, 
+            0, repeat_y, 
+        )
+
     def on_x(self, *args):
         if self.gameScreen :
             if self.x < self.gameScreen.ids.player.x and not self.scored:
@@ -118,10 +148,38 @@ class Obstacle(Widget):
 class GameOver(Screen):
     pass
 
+class ChoosePlayer(Screen):
+    currentplayer = StringProperty('assets/players/ratue_pixel_art.png')
+    cicerue = False
+    matue = False
+    davibritue = False
+    playerlist = ['Ratuê', 'Ciceruê', 'Matuê', 'Davi Brituê']
+    playerlistImage = ['assets/players/ratue_pixel_art.png', 'assets/players/cicero.png', 'assets/players/matue_pixel_art.png', 'assets/players/davi_brito.png']
+    count = NumericProperty(0)
+
+    with open("assets/highscore.txt", "r") as f:
+        highscore = int(f.read())
+        if highscore >= 200 :
+            cicerue = True
+        if highscore >= 420 :
+            matue = True
+        if highscore >= 1000 :
+            davibritue = True
+    
+    def ChangePlayerRight(self):
+        self.count = (self.count + 1) % len(self.playerlistImage)
+        self.currentplayer = self.playerlistImage[self.count]
+        App.get_running_app().current_player_image = self.currentplayer
+    
+    def ChangePlayerLeft(self):
+        self.count = (self.count - 1) % len(self.playerlistImage)
+        self.currentplayer = self.playerlistImage[self.count]
+        App.get_running_app().current_player_image = self.currentplayer
+
 class Player(Image):
     speed = NumericProperty(0)
 
 class Ratue(App):
-    pass
+    current_player_image = StringProperty('assets/players/ratue_pixel_art.png')
 
 Ratue().run()
