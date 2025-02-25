@@ -25,8 +25,10 @@ Manager:
         orientation: 'vertical'
         padding: '200dp', '30dp'
         spacing: '350dp'
+
         Widget:
-            size_size_hint_y: 1.5
+            size_hint_y: 1.5
+
         BoxLayout:
             spacing: '100dp'
             MenuButton: 
@@ -48,7 +50,7 @@ Manager:
 <Player>
     source: app.current_player_image
 
-<Game>
+<Game>:
     FloatLayout:
         canvas:
             Color:
@@ -75,7 +77,7 @@ Manager:
             y: root.height*0.85 - self.height
         Player:
             id: player
-            allow_stretch:True
+            allow_stretch: True
             size_hint: None, None
             size: root.height/8 , root.height/8
             x: root.width/20
@@ -89,27 +91,53 @@ Manager:
             Rectangle: 
                 size: self.size
                 pos: self.pos
-                source: 'assets/screens/gameover.png'
+                source: 'assets/screens/layout.png'
 
         orientation: 'vertical'
         padding: '200dp', '30dp'
-        spacing: '350dp'
-        Widget:
-            size_size_hint_y: 1.5
+        spacing: '50dp'
+        
+        BoxLayout:
+            orientation: 'vertical'
+            padding: '10dp', '10dp'
+            spacing: '10dp'
+            size_hint_y: 0.3 
+            pos_hint: {'center_x': 0.5, 'top': 1}
+            Label:
+                text: 'Ratuê bateu em um prédio e morreu'
+                font_name: 'assets/Monocraft'
+                font_size: '50sp'  
+                color: '#854bb8'  
+                bold: True
+                size_hint_y: None
+                height: self.font_size
+            Label:
+                text: 'Seu Score foi:' + str(root.score)
+                font_name: 'assets/Monocraft'
+                font_size: '30sp' 
+                bold: True
+                size_hint_y: None
+                height: self.font_size
+
+        Image:
+            source: 'assets/players/ratue_gameover.png'
+
         BoxLayout:
             spacing: '100dp'
             MenuButton: 
                 text: 'Tentar de novo'
                 font_size: '30dp'
                 font_name: 'assets/Monocraft'
+                size_hint: 0.3, 0.5
                 on_release: app.root.current = 'Game'
             MenuButton:
                 text: 'Menu'
                 font_size: '30dp'                
                 font_name: 'assets/Monocraft'
+                size_hint: 0.3, 0.5
                 on_release: app.root.current = 'Menu'
 
-<ChoosePlayer>
+<ChoosePlayer>:
     BoxLayout:
         canvas:
             Color:
@@ -120,54 +148,69 @@ Manager:
                 source: 'assets/screens/layout.png'
 
         orientation: 'vertical'
-        padding: '600dp', '30dp'
-        spacing: '200dp'
+        padding: '200dp', '30dp'  
+        spacing: '100dp'  
+
         BoxLayout:
             orientation: 'vertical'
-            padding: '200dp', '10dp'
+            padding: '10dp', '10dp'
             spacing: '10dp'
+            size_hint_y: 0.3 
+            pos_hint: {'center_x': 0.5, 'top': 1}
             Label:
                 text: 'Escolha seu personagem'
                 font_name: 'assets/Monocraft'
-                font_size: '65sp'
+                font_size: '30sp'  
                 bold: True
                 size_hint_y: None
                 height: self.font_size
             Label:
                 text: root.playerlist[root.count]
                 font_name: 'assets/Monocraft'
-                font_size: '100sp'
+                font_size: '50sp'  
                 color: '#854bb8'
                 bold: True
                 size_hint_y: None
                 height: self.font_size
             Label:
-                text: root.playerlist[root.count]
+                text: root.message
                 font_name: 'assets/Monocraft'
                 font_size: '20sp'
                 color: '#525252'
                 bold: True
                 size_hint_y: None
                 height: self.font_size
+
         BoxLayout:
             orientation: 'horizontal'
-            spacing: '100dp'
+            spacing: '10dp'  
+            size_hint_y: 0.3 
+            pos_hint: {'center_x': 0.5, 'center_y': 0.5}
             MenuButton: 
                 text: '<'
                 font_size: '30dp'
                 font_name: 'assets/Monocraft'
+                size_hint: 0.3, 0.5
                 on_release: root.ChangePlayerLeft()
             AsyncImage:
                 source: root.currentplayer
+                size_hint: 0.8, 0.8  
+                allow_stretch: True
+                keep_ratio: True
             MenuButton:
                 text: '>'
                 font_size: '30dp'                
                 font_name: 'assets/Monocraft'
+                size_hint: 0.3, 0.5
                 on_release: root.ChangePlayerRight()
+
         MenuButton:
             text: 'Jogar'
             font_size: '30dp'                
             font_name: 'assets/Monocraft'
+            size_hint_y: 0.2  
+            size_hint_x: 0.5
+            pos_hint: {'center_x': 0.5, 'y': 0}
             on_release: app.root.current = 'Game'
 
 <Obstacle>:
@@ -178,6 +221,5 @@ Manager:
             size: self.size
             pos: self.pos
             source: 'assets/building.png'
-    size_hint:None, None
+    size_hint: None, None
     width: '100dp'
-    
